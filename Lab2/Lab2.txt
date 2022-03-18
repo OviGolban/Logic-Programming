@@ -1,0 +1,174 @@
+4.1. Testați următoarele întrebări:
+
+
+?- man(george). % este george bărbat?
+true.
+?- man(X). % cine este bărbat?
+X = andrei ? ; % repetăm întrebarea cu ; sau n sau spațiu
+X = george ? ;
+X = alex ? ;
+false.
+?- parent(X, andrei). % Cine sunt părinții lui andrei?
+X = maria ? ;
+X = george ? ;
+false.
+?- parent(maria, X). % Cine sunt copii mariei?
+X = ana ? ;
+X = andrei ? ;
+false.
+?- mother(ana, X). % Cine sunt copii anei?
+false.
+?- mother(X, ana). % Care este mama anei?
+X = maria ? ; % repetăm întrebarea = mai are ana o alta mamă?
+false.
+
+am executat intrebarile de mai sus si am observat rezultatele mentionate mai sus,
+rezultate care corespund cu ceea ce ma asteptam din arborele genealogic dat
+
+
+4.4. Testați următoarele întrebări:
+?- father(alex, X).
+?- father(X, Y).
+?- mother(dorina, maria).
+
+?- 
+|    father(alex, X).
+X = sara ;
+X = ema.
+
+?- father(X,Y).
+X = george,
+Y = ana ;
+X = george,
+Y = andrei ;
+X = alex,
+Y = sara ;
+X = alex,
+Y = ema ;
+X = marius,
+Y = maria ;
+X = mihai,
+Y = george ;
+X = mihai,
+Y = carmen ;
+false.
+
+?- mother(dorina, maria).
+true.
+
+
+
+4.5. Testați următoarele predicate:
+% Predicatul sibling/2
+% X și Y sunt frați/surori dacă au același parinte și X diferit de Y
+sibling(X,Y) :- parent(Z,X), parent(Z,Y), X\=Y.
+% Predicatul sister/2
+% X este sora lui Y dacă X este femeie și X și Y sunt frați/surori
+sister(X,Y) :- sibling(X,Y), woman(X).
+% Predicatul aunt/2
+% X este mătușa lui Y daca este sora lui Z și Z este părintele lui Y
+aunt(X,Y) :- sister(X,Z), parent(Z,Y).
+
+
+?- sibling(maria,george).
+false.
+
+?- sibling(ana, andrei).
+true .
+
+?- sister(ema, andrei).
+false.
+
+
+?- aunt(carmen, X).
+X = ana ;
+X = andrei ;
+X = ana ;
+X = andrei ;
+false.
+
+?- uncle(george, X).
+X = sara ;
+X = ema ;
+X = sara ;
+X = ema.
+
+
+4.7. Urmăriți pașii pentru găsirea răspunsului la următoarele întrebări:
+?- aunt(carmen, X).
+?- grandmother(dorina, Y).
+?- grandfather(X, ana).
+
+In cazul acestui ex am executat comanda trace pentru a vedea rularea predicatelor pas cu pas.
+
+
+?- aunt(carmen, X).
+   Call: (10) aunt(carmen, _12738) ? creep
+   Call: (11) sister(carmen, _13926) ? creep
+   Call: (12) sibling(carmen, _13926) ? creep
+   Call: (13) parent(_15436, carmen) ? creep
+   Exit: (13) parent(mihai, carmen) ? creep
+   Call: (13) parent(mihai, _13926) ? creep
+   Exit: (13) parent(mihai, george) ? creep
+   Call: (13) carmen\=george ? creep
+   Exit: (13) carmen\=george ? creep
+   Exit: (12) sibling(carmen, george) ? creep
+   Call: (12) woman(carmen) ? creep
+   Exit: (12) woman(carmen) ? creep
+   Exit: (11) sister(carmen, george) ? creep
+   Call: (11) parent(george, _12738) ? creep
+   Exit: (11) parent(george, ana) ? creep
+   Exit: (10) aunt(carmen, ana) ? creep
+X = ana .
+
+ ?- grandmother(dorina, Y).
+   Call: (10) grandmother(dorina, _950) ? creep
+   Call: (11) woman(dorina) ? creep
+   Exit: (11) woman(dorina) ? creep
+   Call: (11) parent(dorina, _3644) ? creep
+   Exit: (11) parent(dorina, maria) ? creep
+   Call: (11) parent(maria, _950) ? creep
+   Exit: (11) parent(maria, ana) ? creep
+   Exit: (10) grandmother(dorina, ana) ? creep
+Y = ana .
+
+
+[trace]  ?- grandfather(X, ana).
+   Call: (10) grandfather(_5856, ana) ? Unknown option (h for help)
+   Call: (10) grandfather(_5856, ana) ? Unknown option (h for help)
+   Call: (10) grandfather(_5856, ana) ? creep
+   Call: (11) man(_5856) ? creep
+   Exit: (11) man(andrei) ? creep
+   Call: (11) parent(andrei, _10054) ? creep
+   Fail: (11) parent(andrei, _10054) ? creep
+   Redo: (11) man(_5856) ? creep
+   Exit: (11) man(george) ? creep
+   Call: (11) parent(george, _13064) ? creep
+   Exit: (11) parent(george, ana) ? creep
+   Call: (11) parent(ana, ana) ? creep
+   Fail: (11) parent(ana, ana) ? creep
+   Redo: (11) parent(george, _13064) ? creep
+   Exit: (11) parent(george, andrei) ? creep
+   Call: (11) parent(andrei, ana) ? creep
+   Fail: (11) parent(andrei, ana) ? creep
+   Redo: (11) man(_5856) ? creep
+   Exit: (11) man(alex) ? creep
+   Call: (11) parent(alex, _20598) ? creep
+   Exit: (11) parent(alex, sara) ? creep
+   Call: (11) parent(sara, ana) ? creep
+   Fail: (11) parent(sara, ana) ? creep
+   Redo: (11) parent(alex, _20598) ? creep
+   Exit: (11) parent(alex, ema) ? creep
+   Call: (11) parent(ema, ana) ? creep
+   Fail: (11) parent(ema, ana) ? creep
+   Redo: (11) man(_5856) ? creep
+   Exit: (11) man(marius) ? creep
+   Call: (11) parent(marius, _28132) ? creep
+   Exit: (11) parent(marius, maria) ? creep
+   Call: (11) parent(maria, ana) ? creep
+   Exit: (11) parent(maria, ana) ? creep
+   Exit: (10) grandfather(marius, ana) ? creep
+X = marius .
+
+
+
